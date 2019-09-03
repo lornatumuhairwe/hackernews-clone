@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from "prop-types";
+import PostMetaInfo from "./PostMetaInfo";
 
 export default function PostList ({ stories, updateStoryState, updateUserState }) {
   return(
@@ -15,17 +16,11 @@ export default function PostList ({ stories, updateStoryState, updateUserState }
           >
             {story.title}
           </a>
-          <div className="meta-info-light">
-            <span>
-              by <a href='' onClick={(event) => updateUserState(event, story.by)}>{story.by}</a>
-            </span>
-            <span>
-              on {story.time}
-            </span>
-            <span>
-              with <a href='' onClick={(event) => updateStoryState(event, story)}>{story.descendants}</a> comments
-            </span>
-          </div>
+          <PostMetaInfo
+            story={story}
+            updateUserState={updateUserState}
+            updateStoryState={updateStoryState}
+          />
         </li>
       ))}
     </ul>

@@ -101,7 +101,13 @@ export default class Stories extends React.Component {
 
   updateStoryState(event, story){
     event.preventDefault();
-    this.setState({ story, comments: null, stories: null, type: '' });
+    this.setState({
+      story,
+      comments: null,
+      stories: null,
+      type: '',
+      user: null
+    });
 
     if (story.kids){
       fetchComments(story.kids)
@@ -121,7 +127,7 @@ export default class Stories extends React.Component {
     event.preventDefault();
     fetchUser(username)
       .then(user => {
-        this.setState({ user, stories: null, type: '' });
+        this.setState({ user, stories: null, type: '', comments: null, story: null });
         return user.submitted.slice(0, 50);
       })
       .then(post_ids => {
@@ -148,9 +154,19 @@ export default class Stories extends React.Component {
 
         {user && <User user={user}/>}
 
-        {story && <Story story={story} comments={comments} error={error} />}
+        {story && <Story
+          story={story}
+          comments={comments}
+          error={error}
+          updateStoryState={this.updateStoryState}
+          updateUserState={this.updateUserState}
+        />}
 
-        {stories && <PostList stories={stories} updateStoryState={this.updateStoryState} updateUserState={this.updateUserState}/>}
+        {stories && <PostList
+          stories={stories}
+          updateStoryState={this.updateStoryState}
+          updateUserState={this.updateUserState}
+        />}
 
         {this.isLoading() && <p>LOADING</p>}
 
