@@ -43,6 +43,33 @@ li {
   background: transparent;
 }
 
+button {
+  padding: 0;
+}
+
 button:focus {
   outline: none;
+}
+
+.post {
+  margin: 20px 0;
+}
+
+.link {
+  color: rgb(187, 46, 31);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.meta-info-light {
+  margin-top: 5px;
+  color: gray;
+}
+
+.meta-info-light span {
+  margin: 10px 6px 10px 0;
+}
+
+.meta-info-light a {
+  color: black;
 }
