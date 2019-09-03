@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { fetchMainPosts } from "../utils/api";
+import { fetchMainPosts, fetchComments } from "../utils/api";
+import Story from './Story';
 
 function TypeNav ({ selected, updateType }) {
   const types = ['Top', 'New'];
@@ -27,7 +28,7 @@ TypeNav.propTypes = {
   updateType: PropTypes.func.isRequired
 };
 
-function PostList ({ stories }) {
+function PostList ({ stories, updateStoryState }) {
   return(
     <ul>
       {stories.map(story => (
@@ -49,7 +50,7 @@ function PostList ({ stories }) {
               on {story.time}
             </span>
             <span>
-              with <a href=''>{story.descendants}</a> comments
+              with <a href='' onClick={(event) => updateStoryState(event, story)}>{story.descendants}</a> comments
             </span>
           </div>
         </li>
@@ -65,11 +66,14 @@ export default class Stories extends React.Component {
     this.state = {
       type: 'Top',
       stories: null,
-      error: null
+      error: null,
+      story: null,
+      comments: null
     };
 
     this.updateType = this.updateType.bind(this);
     this.isLoading = this.isLoading.bind(this);
+    this.updateStoryState = this.updateStoryState.bind(this);
   }
 
   componentDidMount() {
@@ -80,7 +84,9 @@ export default class Stories extends React.Component {
     this.setState({
       stories: null,
       type,
-      error: null
+      error: null,
+      story: null,
+      comments: null
     });
 
     fetchMainPosts(type.toLowerCase())
@@ -88,7 +94,9 @@ export default class Stories extends React.Component {
       this.setState({
         stories,
         type,
-        error: null
+        error: null,
+        story: null,
+        comments: null
       })
     })
       .catch((error) => {
@@ -99,12 +107,29 @@ export default class Stories extends React.Component {
       })
   }
 
+  updateStoryState(event, story){
+    event.preventDefault();
+    this.setState({ story, comments: null });
+
+    fetchComments(story.kids)
+      .then(comments => {
+        this.setState({
+          comments: comments
+        })
+      })
+  }
+
   isLoading () {
     return this.state.stories === null && this.state.error === null
   }
 
   render() {
-    const { type, error, stories } = this.state;
+    const { type, error, stories, story, comments } = this.state;
+
+    if (story) {
+      return <Story story={story} comments={comments}/>
+    }
+
     return(
       <React.Fragment>
         <TypeNav
@@ -116,7 +141,7 @@ export default class Stories extends React.Component {
 
         {error && <p>{error}</p>}
 
-        {stories && <PostList stories={stories}/>}
+        {stories && <PostList stories={stories} updateStoryState={this.updateStoryState}/>}
       </React.Fragment>
     )
   }
