@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { fetchMainPosts, fetchComments, fetchUser, fetchPosts } from "../utils/api";
 import Story from './Story';
+import PostList from './PostList';
 
 function TypeNav ({ selected, updateType }) {
   const types = ['Top', 'New'];
@@ -27,37 +28,6 @@ TypeNav.propTypes = {
   selected: PropTypes.string.isRequired,
   updateType: PropTypes.func.isRequired
 };
-
-function PostList ({ stories, updateStoryState, updateUserState }) {
-  return(
-    <ul>
-      {stories.map(story => (
-        <li
-          className='post'
-          key={story.id}
-        >
-          <a
-            href={story.url}
-            className='link'
-          >
-            {story.title}
-          </a>
-          <div className="meta-info-light">
-            <span>
-              by <a href='' onClick={(event) => updateUserState(event, story.by)}>{story.by}</a>
-            </span>
-            <span>
-              on {story.time}
-            </span>
-            <span>
-              with <a href='' onClick={(event) => updateStoryState(event, story)}>{story.descendants}</a> comments
-            </span>
-          </div>
-        </li>
-      ))}
-    </ul>
-  )
-}
 
 function User({ user }){
   return(
@@ -106,7 +76,8 @@ export default class Stories extends React.Component {
       type,
       error: null,
       story: null,
-      comments: null
+      comments: null,
+      user: null
     });
 
     fetchMainPosts(type.toLowerCase())
@@ -116,7 +87,8 @@ export default class Stories extends React.Component {
         type,
         error: null,
         story: null,
-        comments: null
+        comments: null,
+        user: null
       })
     })
       .catch((error) => {
@@ -129,21 +101,27 @@ export default class Stories extends React.Component {
 
   updateStoryState(event, story){
     event.preventDefault();
-    this.setState({ story, comments: null });
+    this.setState({ story, comments: null, stories: null, type: '' });
 
-    fetchComments(story.kids)
-      .then(comments => {
-        this.setState({
-          comments: comments
+    if (story.kids){
+      fetchComments(story.kids)
+        .then(comments => {
+          this.setState({
+            comments: comments
+          })
         })
+    } else {
+      this.setState({
+        error: 'No Comments for this post available.'
       })
+    }
   }
 
   updateUserState(event, username){
     event.preventDefault();
     fetchUser(username)
       .then(user => {
-        this.setState({ user, stories: null });
+        this.setState({ user, stories: null, type: '' });
         return user.submitted.slice(0, 50);
       })
       .then(post_ids => {
@@ -155,15 +133,11 @@ export default class Stories extends React.Component {
   }
 
   isLoading () {
-    return this.state.stories === null && this.state.error === null
+    return this.state.stories === null && this.state.error === null && this.state.comments === null;
   }
 
   render() {
     const { type, error, stories, story, comments, user } = this.state;
-
-    if (story) {
-      return <Story story={story} comments={comments}/>
-    }
 
     return(
       <React.Fragment>
@@ -172,12 +146,15 @@ export default class Stories extends React.Component {
           updateType={this.updateType}
         />
 
+        {user && <User user={user}/>}
+
+        {story && <Story story={story} comments={comments} error={error} />}
+
+        {stories && <PostList stories={stories} updateStoryState={this.updateStoryState} updateUserState={this.updateUserState}/>}
+
         {this.isLoading() && <p>LOADING</p>}
 
         {error && <p>{error}</p>}
-
-        {user && <User user={user}/>}
-        {stories && <PostList stories={stories} updateStoryState={this.updateStoryState} updateUserState={this.updateUserState}/>}
       </React.Fragment>
     )
   }

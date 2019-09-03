@@ -20,6 +20,7 @@ export default function Story (props) {
           with <a href=''>{descendants}</a> comments
         </span>
       </div>
+
       {props.comments && props.comments.map(comment => (
         <div className="comment" key={comment.id}>
           <div className="meta-info-light">
