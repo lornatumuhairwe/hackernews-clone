@@ -1,102 +1,38 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { fetchMainPosts, fetchComments, fetchUser, fetchPosts } from "../utils/api";
-import Story from './Story';
+import { fetchMainPosts } from '../utils/api';
 import PostList from './PostList';
-import Loading from "./Loading";
-import {ThemeConsumer} from "../contexts/theme";
-
-function TypeNav ({ selected, updateType }) {
-  const types = ['Top', 'New'];
-
-  return (
-    <ThemeConsumer>
-      {({ theme, toggleTheme }) => (
-        <nav className='row space-between'>
-          <ul className='row nav'>
-            {types.map(type => (
-              <li key={type}>
-                <button
-                  className='btn-clear nav-link'
-                  style={ type === selected ? { color: 'rgb(187, 46, 31)' } : null }
-                  onClick={() => updateType(type)}
-                >
-                  {type}
-                </button>
-              </li>
-            ))}
-          </ul>
-          <button
-            className="btn-clear"
-            style={{fontSize: 30}}
-            onClick={toggleTheme}
-          >
-            🔦
-          </button>
-        </nav>
-      )}
-    </ThemeConsumer>
-  )
-}
-
-TypeNav.propTypes = {
-  selected: PropTypes.string.isRequired,
-  updateType: PropTypes.func.isRequired
-};
-
-function User({ user }){
-  return(
-    <ThemeConsumer>
-      {({ theme }) => (
-        <React.Fragment>
-          <h1 className='header'>
-            {user.id}
-          </h1>
-          <div className={`meta-info-${theme}`}>
-            <span>
-              joined {user.created}
-            </span>
-            <span>
-              has {user.karma} karma
-            </span>
-          </div>
-        </React.Fragment>
-      )}
-    </ThemeConsumer>
-  )
-}
+import Loading from './Loading';
 
 export default class Stories extends React.Component {
   constructor(props){
     super(props);
 
     this.state = {
-      type: 'Top',
+      type: props.type,
       stories: null,
-      error: null,
-      story: null,
-      comments: null,
-      user: null
+      error: null
     };
 
     this.updateType = this.updateType.bind(this);
     this.isLoading = this.isLoading.bind(this);
-    this.updateStoryState = this.updateStoryState.bind(this);
-    this.updateUserState = this.updateUserState.bind(this);
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.updateType(this.state.type)
+  }
+
+  componentDidUpdate (prevProps) {
+    if (prevProps.type !== this.props.type) {
+      this.updateType(this.props.type);
+    }
   }
 
   updateType (type) {
     this.setState({
       stories: null,
       type,
-      error: null,
-      story: null,
-      comments: null,
-      user: null
+      error: null
     });
 
     fetchMainPosts(type.toLowerCase())
@@ -104,10 +40,7 @@ export default class Stories extends React.Component {
       this.setState({
         stories,
         type,
-        error: null,
-        story: null,
-        comments: null,
-        user: null
+        error: null
       })
     })
       .catch((error) => {
@@ -118,79 +51,25 @@ export default class Stories extends React.Component {
       })
   }
 
-  updateStoryState(event, story){
-    event.preventDefault();
-    this.setState({
-      story,
-      comments: null,
-      stories: null,
-      type: '',
-      user: null
-    });
-
-    if (story.kids){
-      fetchComments(story.kids)
-        .then(comments => {
-          this.setState({
-            comments: comments
-          })
-        })
-    } else {
-      this.setState({
-        error: 'No Comments for this post available.'
-      })
-    }
-  }
-
-  updateUserState(event, username){
-    event.preventDefault();
-    fetchUser(username)
-      .then(user => {
-        this.setState({ user, stories: null, type: '', comments: null, story: null });
-        return user.submitted.slice(0, 50);
-      })
-      .then(post_ids => {
-        fetchPosts(post_ids)
-          .then(posts => {
-            this.setState({ stories: posts })
-          })
-      })
-  }
-
   isLoading () {
-    return this.state.stories === null && this.state.error === null && this.state.comments === null;
+    return this.state.stories === null && this.state.error === null;
   }
 
   render() {
-    const { type, error, stories, story, comments, user } = this.state;
+    const { error, stories } = this.state;
 
     return(
       <React.Fragment>
-        <TypeNav
-          selected={type}
-          updateType={this.updateType}
-        />
+        {stories && <PostList stories={stories}/>}
 
-        {user && <User user={user}/>}
+        {this.isLoading() && <Loading text='Fetching stories' />}
 
-        {story && <Story
-          story={story}
-          comments={comments}
-          error={error}
-          updateStoryState={this.updateStoryState}
-          updateUserState={this.updateUserState}
-        />}
-
-        {stories && <PostList
-          stories={stories}
-          updateStoryState={this.updateStoryState}
-          updateUserState={this.updateUserState}
-        />}
-
-        {this.isLoading() && <Loading text='Fetching' speed={300}/>}
-
-        {error && <p>{error}</p>}
+        {error && <p className='center-text error'>{error}</p>}
       </React.Fragment>
     )
   }
 }
+
+Stories.propTypes = {
+  type: PropTypes.oneOf(['top', 'new'])
+};

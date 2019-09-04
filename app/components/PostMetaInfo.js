@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 import {ThemeConsumer} from "../contexts/theme";
 
-export default function PostMetaInfo ({ story, updateUserState, updateStoryState }){
+export default function PostMetaInfo ({ story }){
   const { by, time, descendants } = story;
   return (
     <ThemeConsumer>
@@ -10,13 +11,13 @@ export default function PostMetaInfo ({ story, updateUserState, updateStoryState
         ({ theme }) => (
           <div className={`meta-info-${theme}`}>
             <span>
-              by <a href='' onClick={(event) => updateUserState(event, by)}>{by}</a>
+              by <Link to={`/user?id=${by}`}>{by}</Link>
             </span>
             <span>
               on {time}
             </span>
             {descendants && <span>
-              with <a href='' onClick={(event) => updateStoryState(event, story)}>{descendants}</a> comments
+              with <Link to={`/post?id=${story.id}`}>{descendants}</Link> comments
             </span>}
           </div>
         )
@@ -26,7 +27,5 @@ export default function PostMetaInfo ({ story, updateUserState, updateStoryState
 }
 
 PostMetaInfo.propTypes = {
-  story: PropTypes.object.isRequired,
-  updateUserState: PropTypes.func.isRequired,
-  updateStoryState: PropTypes.func.isRequired
+  story: PropTypes.object.isRequired
 };

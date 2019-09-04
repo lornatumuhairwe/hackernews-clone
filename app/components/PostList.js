@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from "prop-types";
+import { Link } from 'react-router-dom';
 import PostMetaInfo from "./PostMetaInfo";
 
-export default function PostList ({ stories, updateStoryState, updateUserState }) {
+export default function PostList ({ stories }) {
   return(
     <ul>
       {stories.length > 0 && stories.map(story => (
@@ -10,17 +11,8 @@ export default function PostList ({ stories, updateStoryState, updateUserState }
           className='post'
           key={story.id}
         >
-          <a
-            href={story.url}
-            className='link'
-          >
-            {story.title}
-          </a>
-          <PostMetaInfo
-            story={story}
-            updateUserState={updateUserState}
-            updateStoryState={updateStoryState}
-          />
+          <Link className='link' to={`/post?id=${story.id}`}>{story.title}</Link>
+          <PostMetaInfo story={story}/>
         </li>
       ))}
     </ul>
@@ -28,7 +20,5 @@ export default function PostList ({ stories, updateStoryState, updateUserState }
 }
 
 PostList.propTypes = {
-  stories: PropTypes.array.isRequired,
-  updateStoryState: PropTypes.func.isRequired,
-  updateUserState: PropTypes.func.isRequired
+  stories: PropTypes.array.isRequired
 };

@@ -1,5 +1,5 @@
-const api = `https://hacker-news.firebaseio.com/v0`
-const json = '.json?print=pretty'
+const api = `https://hacker-news.firebaseio.com/v0`;
+const json = '.json?print=pretty';
 
 function removeDead (posts) {
   return posts.filter(Boolean).filter(({ dead }) => dead !== true)
