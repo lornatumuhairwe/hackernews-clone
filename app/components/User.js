@@ -4,6 +4,7 @@ import { ThemeConsumer } from '../contexts/theme';
 import {fetchPosts, fetchUser} from '../utils/api';
 import Loading from './Loading';
 import PostList from './PostList';
+import { formatDate } from "../utils/helpers";
 
 export default class User extends React.Component {
   state = {
@@ -51,7 +52,7 @@ export default class User extends React.Component {
                 </h1>
                 <div className={`meta-info-${theme}`}>
                   <span>
-                    joined {user.created}
+                    joined {formatDate(user.created)}
                   </span>
                       <span>
                     has {user.karma} karma
