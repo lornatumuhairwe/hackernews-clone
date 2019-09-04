@@ -5,17 +5,13 @@ import Loading from './Loading';
 import { fetchItem, fetchComments } from '../utils/api';
 
 export default class Story extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      story: null,
-      error: null,
-      comments: null,
-      loadingStory: true,
-      loadingComments: true
-    }
-  }
+  state = {
+    story: null,
+    error: null,
+    comments: null,
+    loadingStory: true,
+    loadingComments: true
+  };
 
   componentDidMount(){
     const { id } = queryString.parse(this.props.location.search);

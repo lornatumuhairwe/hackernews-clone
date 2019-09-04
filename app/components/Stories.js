@@ -5,18 +5,11 @@ import PostList from './PostList';
 import Loading from './Loading';
 
 export default class Stories extends React.Component {
-  constructor(props){
-    super(props);
-
-    this.state = {
-      type: props.type,
-      stories: null,
-      error: null
-    };
-
-    this.updateType = this.updateType.bind(this);
-    this.isLoading = this.isLoading.bind(this);
-  }
+  state = {
+    type: this.props.type,
+    stories: null,
+    error: null
+  };
 
   componentDidMount () {
     this.updateType(this.state.type)
@@ -28,7 +21,7 @@ export default class Stories extends React.Component {
     }
   }
 
-  updateType (type) {
+  updateType = (type) => {
     this.setState({
       stories: null,
       type,
@@ -49,11 +42,11 @@ export default class Stories extends React.Component {
           error: `There was an error fetching the stories.`
         })
       })
-  }
+  };
 
-  isLoading () {
+  isLoading = () => {
     return this.state.stories === null && this.state.error === null;
-  }
+  };
 
   render() {
     const { error, stories } = this.state;

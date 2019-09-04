@@ -6,17 +6,13 @@ import Loading from './Loading';
 import PostList from './PostList';
 
 export default class User extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-      user: null,
-      loadingUser: true,
-      stories: null,
-      loadingStories: true,
-      error: null
-    }
-  }
+  state = {
+    user: null,
+    loadingUser: true,
+    stories: null,
+    loadingStories: true,
+    error: null
+  };
 
   componentDidMount(){
     const { id } = queryString.parse(this.props.location.search);
