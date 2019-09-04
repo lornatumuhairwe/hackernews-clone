@@ -27,7 +27,7 @@ li {
   flex-direction: row;
 }
 
-.nav li{
+.nav li {
   margin-right: 10px;
 }
 
@@ -74,6 +74,20 @@ button:focus {
   color: black;
 }
 
+.meta-info-dark {
+  margin-top: 5px;
+  color: gray;
+}
+
+.meta-info-dark a {
+  color: #bebebe;
+}
+
+.meta-info-dark span {
+  margin: 10px 0;
+  margin-right: 6px;
+}
+
 .header {
   margin-bottom: 5px;
 }
@@ -83,4 +97,14 @@ button:focus {
   padding: 10px;
   margin: 10px 0;
   border-radius: 5px;
+}
+
+.dark {
+  color: #DADADA;
+  background: #1c2022;
+  min-height: 100%;
+}
+
+.space-between {
+  justify-content: space-between;
 }

@@ -4,24 +4,38 @@ import { fetchMainPosts, fetchComments, fetchUser, fetchPosts } from "../utils/a
 import Story from './Story';
 import PostList from './PostList';
 import Loading from "./Loading";
+import {ThemeConsumer} from "../contexts/theme";
 
 function TypeNav ({ selected, updateType }) {
   const types = ['Top', 'New'];
 
   return (
-    <ul className='row nav'>
-      {types.map(type => (
-        <li key={type}>
+    <ThemeConsumer>
+      {({ theme, toggleTheme }) => (
+        <nav className='row space-between'>
+          <ul className='row nav'>
+            {types.map(type => (
+              <li key={type}>
+                <button
+                  className='btn-clear nav-link'
+                  style={ type === selected ? { color: 'rgb(187, 46, 31)' } : null }
+                  onClick={() => updateType(type)}
+                >
+                  {type}
+                </button>
+              </li>
+            ))}
+          </ul>
           <button
-            className='btn-clear nav-link'
-            style={ type === selected ? { color: 'rgb(187, 46, 31)' } : null }
-            onClick={() => updateType(type)}
+            className="btn-clear"
+            style={{fontSize: 30}}
+            onClick={toggleTheme}
           >
-            {type}
+            🔦
           </button>
-        </li>
-      ))}
-    </ul>
+        </nav>
+      )}
+    </ThemeConsumer>
   )
 }
 
@@ -32,19 +46,23 @@ TypeNav.propTypes = {
 
 function User({ user }){
   return(
-    <React.Fragment>
-      <h1 className='header'>
-        {user.id}
-      </h1>
-      <div className="meta-info-light">
-        <span>
-          joined {user.created}
-        </span>
-        <span>
-          has {user.karma} karma
-        </span>
-      </div>
-    </React.Fragment>
+    <ThemeConsumer>
+      {({ theme }) => (
+        <React.Fragment>
+          <h1 className='header'>
+            {user.id}
+          </h1>
+          <div className={`meta-info-${theme}`}>
+            <span>
+              joined {user.created}
+            </span>
+            <span>
+              has {user.karma} karma
+            </span>
+          </div>
+        </React.Fragment>
+      )}
+    </ThemeConsumer>
   )
 }
 
