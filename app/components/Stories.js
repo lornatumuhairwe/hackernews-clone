@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { fetchMainPosts, fetchComments, fetchUser, fetchPosts } from "../utils/api";
 import Story from './Story';
 import PostList from './PostList';
+import Loading from "./Loading";
 
 function TypeNav ({ selected, updateType }) {
   const types = ['Top', 'New'];
@@ -168,7 +169,7 @@ export default class Stories extends React.Component {
           updateUserState={this.updateUserState}
         />}
 
-        {this.isLoading() && <p>LOADING</p>}
+        {this.isLoading() && <Loading text='Fetching' speed={300}/>}
 
         {error && <p>{error}</p>}
       </React.Fragment>
